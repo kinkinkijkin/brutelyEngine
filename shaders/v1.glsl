@@ -1,12 +1,14 @@
 #version 300 es
 layout (location = 0) in vec3 position;
+layout (location = 1) in vec3 innormal;
 
 uniform float zNear;
 uniform float zFar;
 uniform float frustumScale;
 uniform mat4 worldTransform;
 
-smooth out vec4 vcolour;
+smooth out vec3 normal;
+out vec3 fragPos;
 
 void main()
 {
@@ -20,6 +22,7 @@ void main()
 
     clipPos.w = -cameraPos.z;
 
-    vcolour = vec4(clipPos.x, clipPos.y, clipPos.z, 1.0);
     gl_Position = clipPos;
+    fragPos = vec3(worldTransform[3] * vec4(position, 1.0));
+    normal = innormal;
 }
