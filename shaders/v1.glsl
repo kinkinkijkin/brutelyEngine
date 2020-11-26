@@ -7,7 +7,7 @@ uniform float zFar;
 uniform float frustumScale;
 uniform mat4 worldTransform;
 
-smooth out vec3 normal;
+out vec3 normal;
 out vec3 fragPos;
 
 void main()

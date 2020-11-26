@@ -28,8 +28,7 @@ proc setUniform1f*(location: uint, value: float) =
     glUniform1f(unifSeq[location], value.GlFloat)
 
 proc setUniform3fv*(location: uint, value: Vec3[GlFloat]) =
-    var valueCopy = value
-    glUniform3fv(unifSeq[location], 1, addr valueCopy[0])
+    glUniform3f(unifSeq[location], value.x, value.y, value.z)
 
 proc setUniformM4fv*(location: uint, value: Mat4[GlFloat]) =
     var valueCopy = value

@@ -23,12 +23,12 @@ triangleModel.indices = triind
 var fscale = submitUniform(prog, "frustumScale")
 var znear = submitUniform(prog, "zNear")
 var zfar = submitUniform(prog, "zFar")
-var ldir = submitUniform(prog, "lightDirection")
+var ldir = submitUniform(prog, "lD")
 
 setUniform1f(fscale, 1.0.GlFloat)
 setUniform1f(znear, 0.05.GlFloat)
 setUniform1f(zfar, 1000.0.GlFloat)
-setUniform3fv(ldir, vec3f(0.7, 1.0, 0.1))
+setUniform3fv(ldir, vec3f(0.3, 0.5, 0.1))
 
 submitWTLoc(glGetUniformLocation(prog, "worldTransform"))
 
