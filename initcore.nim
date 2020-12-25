@@ -1,4 +1,4 @@
-import glad/gl,nimgl/glfw,glm,datahelpers,prgconf,strutils
+import glad/gl,goon,nimgl/glfw,glm,datahelpers,prgconf,strutils
 
 proc compileVSh(vsName:string):GlUint =
     var vs: cstringArray
@@ -54,8 +54,6 @@ proc compileFSh(fsName:string):GlUint =
         quit(4)
     return fshad
 
-
-
 proc prepareES3program*(vsNames, fsNames: seq[string]): GLuint =
     var prog = glCreateProgram()
 
@@ -82,8 +80,11 @@ proc brutelyStart*(): bool =
             glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE)
         wind = glfwCreateWindow(WNDSIZE[0].int32, WNDSIZE[1].int32, WNDNAME)
         wind.makeContextCurrent()
-        glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API)
-        discard gladLoadGLES2(glfwGetProcAddress)
+        when GLVER == "21":
+            glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API)
+        when GLVER == "2ES" or GLVER == "3ES":
+            glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API)
+        gladLoad(glfwGetProcAddress)
         glfwSwapInterval(1)
         glViewport(0,0, WNDSIZE[0].GlSizei, WNDSIZE[1].GlSizei)
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f)

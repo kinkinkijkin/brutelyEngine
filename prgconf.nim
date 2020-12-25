@@ -23,6 +23,8 @@ const
     VERMIN* = 0
     VERHOT* = 0 #semantic versioning numbers.
 
+    GLVER* = "21"
+
 # ----
 # YOUR LINES FROM HERE
 # ----

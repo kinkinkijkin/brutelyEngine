@@ -41,7 +41,7 @@ proc getOBJ*(fileName:string, indexDelimiter:string = "/"):BrutelyModel {.gcsafe
 
             currIndexSplit = indice.split(indexDelimiter)
             tmpFace.add(currIndexSplit[0].parseUint().GlUint - 1)
-            tmpFace.add(currIndexSplit[1].parseUint().GlUint - 1)
+            #tmpFace.add(currIndexSplit[1].parseUint().GlUint - 1)
             tmpFace.add(currIndexSplit[2].parseUint().GlUint - 1)
             break ind
           else: tmpFace.add(indice.parseUint().GlUint - 1)

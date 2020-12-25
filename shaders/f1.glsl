@@ -1,12 +1,9 @@
-#version 300 es
-precision mediump float;
+#version 120
 uniform vec4 modelTint;
 uniform vec3 lD;
 
-in vec3 fragPos;
-in vec3 normal;
-
-out vec4 FragColor;
+varying vec3 normal;
+varying vec3 fpos;
 
 void main()
 {
@@ -14,12 +11,12 @@ void main()
     vec3 ambient = ambientStrength * modelTint.xyz;
 
     vec3 norm = normalize(normal);
-    vec3 lightDir = normalize(lD - fragPos);
+    vec3 lightDir = normalize(lD - fpos);
 
     float diff = max(dot(norm, lightDir), 0.0);
     vec3 diffuse = diff * normalize(modelTint.xyz + vec3(0.2, 0.2, 0.2));
 
     vec3 result = (diffuse + ambient);
-    FragColor = vec4(result, modelTint.w);
+    gl_FragColor = vec4(result, modelTint.w);
 //    FragColor = vec4(norm, 1.0);
 }

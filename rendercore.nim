@@ -1,18 +1,6 @@
-import glm,glad/gl,nimgl/glfw,initcore,times,datahelpers
+import goon,glm,glad/gl,nimgl/glfw,initcore,times,datahelpers
 
 var prog*: GlUint
-
-type
-    Duplicate = object
-        culled, alwaysdraw: bool
-        dupeName: string
-        worldTran: Mat4x4[GlFloat]
-        tint: Vec4[GlFloat]
-    Drawable = object
-        VBO, VAO, EBO, NBO: GlUint
-        drawableName: string
-        vertCount: int
-        dupes: seq[Duplicate]
     
 var drawSeq: seq[Drawable] = @[]
 var unifSeq: seq[Glint] = @[]
@@ -62,14 +50,14 @@ proc brutelyDraw*(): float =
             if dupe.alwaysdraw or not dupe.culled:
                 var wtcopy = dupe.worldTran
                 var tintcopy = dupe.tint
-                glBindVertexArray(model.VAO)
+                goonChooseItem(model)
                 glUniformMatrix4fv(wtloc, 1, GL_FALSE.GlBoolean, addr wtcopy[0][0])
                 glUniform4fv(tintloc, 1, addr tintcopy[0])
                 glDrawElements(GL_TRIANGLES, model.vertCount.GlSizei, GL_UNSIGNED_INT, nil)
+                goonCloseBuffers(model)
     
     #flush, then ready for next state
     #glFlush()
-    glBindVertexArray(0)
 
     glUseProgram(0)
 
@@ -79,27 +67,21 @@ proc brutelyDraw*(): float =
     return ent - stt
 
 proc brutelyModelSubmit*(model: BrutelyModel, modelName: string, culld, adraw: bool = false): uint {.gcsafe.} =
-    var tmpDrawable: Drawable
-
-    glGenBuffers(1, addr tmpDrawable.VBO)
-    glGenVertexArrays(1, addr tmpDrawable.VAO)
-    glGenBuffers(1, addr tmpDrawable.EBO)
-    glGenBuffers(1, addr tmpDrawable.NBO)
+    var tmpDrawable: Drawable = goonBuffersCreate()
 
     var tmpVerts = seqToUncheckedArrayGLFLOAT(model.verts)
     var tmpInds = seqToUncheckedArrayGLUINT(model.indices)
     var tmpNorms = seqToUncheckedArrayGLFLOAT(model.normals)
 
-    glBindVertexArray(tmpDrawable.VAO)
     glBindBuffer(GL_ARRAY_BUFFER, tmpDrawable.VBO)
     glBufferData(GL_ARRAY_BUFFER, (model.verts.len * sizeof(GlFloat)), tmpVerts, GL_STATIC_DRAW)
     glVertexAttribPointer(0, 3, cGL_FLOAT, GL_FALSE.GlBoolean, (3 * sizeof(GlFloat)).GlSizei, nil)
     glEnableVertexAttribArray(0)
 
-    glBindBuffer(GL_ARRAY_BUFFER, tmpDrawable.NBO)
-    glBufferData(GL_ARRAY_BUFFER, (model.normals.len * sizeof(GlFloat)), tmpNorms, GL_STATIC_DRAW)    
-    glVertexAttribPointer(1, 3, cGL_FLOAT, GL_FALSE.GlBoolean, (3 * sizeof(GlFloat)).GlSizei, nil)
-    glEnableVertexAttribArray(1)
+#    glBindBuffer(GL_ARRAY_BUFFER, tmpDrawable.NBO)
+#    glBufferData(GL_ARRAY_BUFFER, (model.normals.len * sizeof(GlFloat)), tmpNorms, GL_STATIC_DRAW)
+#    glVertexAttribPointer(1, 3, cGL_FLOAT, GL_FALSE.GlBoolean, (3 * sizeof(GlFloat)).GlSizei, nil)
+#    glEnableVertexAttribArray(1)
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, tmpDrawable.EBO)
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, (model.indices.len * sizeof(GlInt)), tmpInds, GL_STATIC_DRAW)
