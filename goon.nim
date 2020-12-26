@@ -22,8 +22,8 @@ proc goonChooseItem*(mdl: Drawable) =
   when GLVER == "21" or GLVER == "2ES":
     glEnableClientState(GL_VERTEX_ARRAY)
     glBindBuffer(GL_ARRAY_BUFFER, mdl.VBO)
-    glEnableVertexAttribArray(0)
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mdl.EBO)
+    glEnableVertexAttribArray(0)
   when GLVER == "3ES":
     glBindVertexArray(mdl.VAO)
 
@@ -39,7 +39,7 @@ proc goonBuffersCreate*: Drawable =
   when GLVER == "3ES": glBindVertexArray(tmpdrw.VAO)
   return tmpdrw
 
-proc goonCloseBuffers*(mdl: Drawable) =
+proc goonCloseBuffers*() =
   when GLVER == "21" or GLVER == "2ES":
     glBindBuffer(GL_ARRAY_BUFFER, 0)
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0)

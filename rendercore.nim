@@ -53,11 +53,13 @@ proc brutelyDraw*(): float =
                 goonChooseItem(model)
                 glUniformMatrix4fv(wtloc, 1, GL_FALSE.GlBoolean, addr wtcopy[0][0])
                 glUniform4fv(tintloc, 1, addr tintcopy[0])
-                glDrawElements(GL_TRIANGLES, model.vertCount.GlSizei, GL_UNSIGNED_INT, nil)
-                goonCloseBuffers(model)
+                glDrawElements(GL_TRIANGLES, (model.vertCount).GlSizei, GL_UNSIGNED_INT, nil)
+                goonCloseBuffers()
     
     #flush, then ready for next state
-    #glFlush()
+    glFlush()
+    
+    goonCloseBuffers()
 
     glUseProgram(0)
 
@@ -85,12 +87,12 @@ proc brutelyModelSubmit*(model: BrutelyModel, modelName: string, culld, adraw: b
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, tmpDrawable.EBO)
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, (model.indices.len * sizeof(GlInt)), tmpInds, GL_STATIC_DRAW)
-
+    goonCloseBuffers()
     glFlush()
 
     var tmpDupe: Duplicate
 
-    tmpDrawable.vertCount = model.verts.len
+    tmpDrawable.vertCount = model.indices.len
     tmpDupe.culled = culld
     tmpDupe.alwaysdraw = adraw
     tmpDupe.worldTran = mat4f(1)

@@ -22,4 +22,5 @@ void main()
     normal = gl_Normal;
     fpos = vec3(worldTransform[3] * gl_Vertex);
     gl_Position = clipPos;
+//    gl_Position = gl_Vertex;
 }

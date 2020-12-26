@@ -18,5 +18,5 @@ void main()
 
     vec3 result = (diffuse + ambient);
     gl_FragColor = vec4(result, modelTint.w);
-//    FragColor = vec4(norm, 1.0);
+//    gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
 }
