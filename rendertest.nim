@@ -20,6 +20,8 @@ var triangleModel: BrutelyModel
 triangleModel.verts = tri
 triangleModel.indices = triind
 
+var lightDir = vec3f(0.3, 0.5, -0.1)
+
 var fscale = submitUniform(defprog, "frustumScale")
 var znear = submitUniform(defprog, "zNear")
 var zfar = submitUniform(defprog, "zFar")
@@ -28,13 +30,23 @@ var ldir = submitUniform(defprog, "lD")
 setUniform1f(fscale, 1.0.GlFloat)
 setUniform1f(znear, 0.05.GlFloat)
 setUniform1f(zfar, 1000.0.GlFloat)
-setUniform3fv(ldir, vec3f(0.3, 0.5, -0.9))
+setUniform3fv(ldir, lightDir)
 
 var toonProg = prepareES3program(@["shaders/v1.glsl"], @["shaders/specialF/toonLights.glsl"])
 var toonWT = glGetUniformLocation(toonProg, "worldTransform")
 var toonTT = glGetUniformLocation(toonprog, "modelTint")
 
 var toonProgInd = submitProgram(toonProg, toonWT, toonTT)
+
+var fscaleT = submitUniform(toonProg, "frustumScale")
+var znearT = submitUniform(toonProg, "zNear")
+var zfarT = submitUniform(toonProg, "zFar")
+var ldirT = submitUniform(toonProg, "lD")
+
+setUniform1f(fscaleT, 1.0.GlFloat)
+setUniform1f(znearT, 0.05.GlFloat)
+setUniform1f(zfarT, 1000.0.GlFloat)
+setUniform3fv(ldirT, lightDir)
 
 var triIndex = brutelyModelSubmit(triangleModel, "triangle")
 
