@@ -65,6 +65,19 @@ proc prepareES3program*(vsNames, fsNames: seq[string]): GLuint =
 
     prog.glLinkProgram()
 
+    var status: GlInt = 0
+    
+    glGetProgramiv(prog, GL_LINK_STATUS, addr status)
+
+    if status == GL_FALSE:
+        echo "could not link a program"
+        var length: GlInt = 0
+        glGetProgramiv(prog, GL_INFO_LOG_LENGTH, addr length)
+
+        var ilog: cstring = cast[ptr UncheckedArray[GlChar]](alloc0(length))
+        glGetProgramInfoLog(prog, length, nil, ilog)
+        echo ilog
+        quit(6)
     glUseProgram(prog)
 
     return prog
