@@ -45,7 +45,7 @@ proc brutelyDraw*(): float =
     glClear(GL_COLOR_BUFFER_BIT)
     glClear(GL_DEPTH_BUFFER_BIT)
 
-    glUseProgram(defprog)
+    #glUseProgram(defprog)
 
     #iterate through drawables and draw them
     for model in drawSeq:
@@ -53,12 +53,13 @@ proc brutelyDraw*(): float =
             if dupe.alwaysdraw or not dupe.culled:
                 var wtcopy = dupe.worldTran
                 var tintcopy = dupe.tint
-                glUseProgram(progSeq[dupe.program].loc)
+                var currpro = progSeq[dupe.program]
+                glUseProgram(currpro.loc)
                 goonChooseItem(model)
-                glUniformMatrix4fv(progSeq[dupe.program].wtloc, 1, GL_FALSE.GlBoolean, addr wtcopy[0][0])
-                glUniform4fv(progSeq[dupe.program].tintloc, 1, addr tintcopy[0])
+                glUniformMatrix4fv(currpro.wtloc, 1, GL_FALSE.GlBoolean, addr wtcopy[0][0])
+                glUniform4fv(currpro.tintloc, 1, addr tintcopy[0])
                 glDrawElements(GL_TRIANGLES, (model.vertCount).GlSizei, GL_UNSIGNED_INT, nil)
-                goonCloseBuffers()
+                #goonCloseBuffers()
     
     #flush, then ready for next state
     glFlush()

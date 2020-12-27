@@ -24,7 +24,6 @@ proc gladLoad*(lp: proc) =
 
 proc goonChooseItem*(mdl: Drawable) =
   when GLVER == "21" or GLVER == "2ES":
-    glEnableClientState(GL_VERTEX_ARRAY)
     glBindBuffer(GL_ARRAY_BUFFER, mdl.VBO)
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mdl.EBO)
     glEnableVertexAttribArray(0)

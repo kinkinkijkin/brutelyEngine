@@ -15,11 +15,11 @@ void main()
 
     float diff = max(dot(norm, lightDir), 0.0);
 
-    if (diff > 0.93)
+    if (diff >= 0.93)
         diff = 1.0;
-    else if (diff > 0.55)
+    else if (diff >= 0.55)
         diff = 0.68;
-    else if (diff > 0.25)
+    else if (diff < 0.55)
         diff = 0.27;
     else
         diff = diff * 0.9;
