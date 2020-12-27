@@ -1,16 +1,23 @@
 import goon,glm,glad/gl,nimgl/glfw,initcore,times,datahelpers
 
-var prog*: GlUint
-    
+var defprog*: GlUint
+
+var progSeq: seq[ShaderProg] = @[]
 var drawSeq: seq[Drawable] = @[]
 var unifSeq: seq[Glint] = @[]
-var wtloc: GlInt = 0.GlInt
-var tintloc: GlInt = 0.GlInt
 
 proc submitUniform*(program: GlUint, name: string): uint =
     var unif = glGetUniformLocation(program, name)
     unifSeq.add(unif)
     return (unifSeq.len - 1).uint
+
+proc submitProgram*(program: GlUint, wt, tint: GlInt): uint =
+    var tmpSP: ShaderProg
+    tmpSP.loc = program
+    tmpSP.wtloc = wt
+    tmpSP.tintloc = tint
+    progSeq.add(tmpSP)
+    return (progSeq.len - 1).uint
 
 proc setUniform1f*(location: uint, value: float) =
     glUniform1f(unifSeq[location], value.GlFloat)
@@ -22,16 +29,12 @@ proc setUniformM4fv*(location: uint, value: Mat4[GlFloat]) =
     var valueCopy = value
     glUniformMatrix4fv(unifSeq[location], 1, GL_FALSE.GlBoolean, addr valueCopy[0][0])
 
-proc submitWTLoc*(location: GlInt) =
-    wtloc = location
-
-proc submitTintLoc(location: GlInt) =
-    tintloc = location
-
 proc brutelySetup*() =
     assert brutelyStart()
-    prog = prepareES3program(@["shaders/v1.glsl"], @["shaders/f1.glsl"])
-    submitTintLoc(glGetUniformLocation(prog, "modelTint"))
+    defprog = prepareES3program(@["shaders/v1.glsl"], @["shaders/f1.glsl"])
+    var tloc = glGetUniformLocation(defprog, "modelTint")
+    var wtloc = glGetUniformLocation(defprog, "worldTransform")
+    discard submitProgram(defprog, wtloc, tloc)
 
 proc brutelyDraw*(): float =
     var stt = cpuTime()
@@ -42,7 +45,7 @@ proc brutelyDraw*(): float =
     glClear(GL_COLOR_BUFFER_BIT)
     glClear(GL_DEPTH_BUFFER_BIT)
 
-    glUseProgram(prog)
+    glUseProgram(defprog)
 
     #iterate through drawables and draw them
     for model in drawSeq:
@@ -50,9 +53,10 @@ proc brutelyDraw*(): float =
             if dupe.alwaysdraw or not dupe.culled:
                 var wtcopy = dupe.worldTran
                 var tintcopy = dupe.tint
+                glUseProgram(progSeq[dupe.program].loc)
                 goonChooseItem(model)
-                glUniformMatrix4fv(wtloc, 1, GL_FALSE.GlBoolean, addr wtcopy[0][0])
-                glUniform4fv(tintloc, 1, addr tintcopy[0])
+                glUniformMatrix4fv(progSeq[dupe.program].wtloc, 1, GL_FALSE.GlBoolean, addr wtcopy[0][0])
+                glUniform4fv(progSeq[dupe.program].tintloc, 1, addr tintcopy[0])
                 glDrawElements(GL_TRIANGLES, (model.vertCount).GlSizei, GL_UNSIGNED_INT, nil)
                 goonCloseBuffers()
     
@@ -98,6 +102,7 @@ proc brutelyModelSubmit*(model: BrutelyModel, modelName: string, culld, adraw: b
     tmpDupe.worldTran = mat4f(1)
     tmpDupe.dupeName = "ORIGINAL"
     tmpDupe.tint = vec4f(1.0, 1.0, 1.0, 1.0)
+    tmpDupe.program = 0
     tmpDrawable.drawableName = modelName
     tmpDrawable.dupes.add(tmpDupe)
 
@@ -112,9 +117,13 @@ proc brutelyModelDupe*(index: uint, worldTransform: Mat4x4[GlFloat], name: strin
     tmpDupe.worldTran = worldTransform
     tmpDupe.dupeName = name
     tmpDupe.tint = vec4f(1.0, 1.0, 1.0, 1.0)
+    tmpDupe.program = 0
     drawSeq[index].dupes.add(tmpDupe)
     
     return (drawSeq[index].dupes.len - 1).uint
+
+proc brutelyProgDupe*(modelIndex, dupeIndex, progIndex: uint) =
+    drawSeq[modelIndex].dupes[dupeIndex].program = progIndex
 
 proc brutelyTintDupe*(modelIndex, dupeIndex: uint, colour: Vec4[GlFloat]) =
     drawSeq[modelIndex].dupes[dupeIndex].tint = colour

@@ -1,11 +1,15 @@
 import glm,glad/gl,prgconf
 
 type
+  ShaderProg* = object
+    loc*: GlUint
+    wtloc*, tintloc*: GlInt
   Duplicate* = object
     dupeName*: string
     culled*, alwaysdraw*: bool
     worldTran*: Mat4x4[GlFloat]
     tint*: Vec4[GlFloat]
+    program*: uint
   Drawable* = object
     drawableName*: string
     VBO*, VAO*, EBO*, NBO*: GlUint

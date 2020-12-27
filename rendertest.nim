@@ -1,4 +1,4 @@
-import rendercore,glad/gl,objloader,datahelpers,nimgl/glfw,glm
+import rendercore,initcore,glad/gl,objloader,datahelpers,nimgl/glfw,glm
 
 brutelySetup()
 
@@ -20,17 +20,21 @@ var triangleModel: BrutelyModel
 triangleModel.verts = tri
 triangleModel.indices = triind
 
-var fscale = submitUniform(prog, "frustumScale")
-var znear = submitUniform(prog, "zNear")
-var zfar = submitUniform(prog, "zFar")
-var ldir = submitUniform(prog, "lD")
+var fscale = submitUniform(defprog, "frustumScale")
+var znear = submitUniform(defprog, "zNear")
+var zfar = submitUniform(defprog, "zFar")
+var ldir = submitUniform(defprog, "lD")
 
 setUniform1f(fscale, 1.0.GlFloat)
 setUniform1f(znear, 0.05.GlFloat)
 setUniform1f(zfar, 1000.0.GlFloat)
-setUniform3fv(ldir, vec3f(0.3, 0.5, -0.1))
+setUniform3fv(ldir, vec3f(0.3, 0.5, -0.9))
 
-submitWTLoc(glGetUniformLocation(prog, "worldTransform"))
+var toonProg = prepareES3program(@["shaders/v1.glsl"], @["shaders/specialF/toonLights.glsl"])
+var toonWT = glGetUniformLocation(toonProg, "worldTransform")
+var toonTT = glGetUniformLocation(toonprog, "modelTint")
+
+var toonProgInd = submitProgram(toonProg, toonWT, toonTT)
 
 var triIndex = brutelyModelSubmit(triangleModel, "triangle")
 
@@ -40,6 +44,7 @@ var tmodCopy1 = brutelyModelDupe(tmodIndex, mat4(1.0.GlFloat), "copy1")
 brutelyMoveDupe(triIndex, 0.uint, vec3f(1.0, 1.0, -5.0))
 brutelyTintDupe(triIndex, 0.uint, vec4f(0.6, 0.3, 0.2, 0.3))
 
+brutelyProgDupe(tmodIndex, 0.uint, toonProgInd)
 brutelyMoveDupe(tmodIndex, 0.uint, vec3f(1.0, 1.0, -10.0))
 brutelyTintDupe(tmodIndex, 0.uint, vec4f(0.7, 0.4, 0.4, 1.0))
 
