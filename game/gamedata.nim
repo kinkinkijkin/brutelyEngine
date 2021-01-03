@@ -4,8 +4,8 @@ type
   CollisionMask* = array[8, bool]
   PosTrackedObj* = object of RootObj
     objname*: string
-    pos*: Vec3[float64]
-    rot*: Mat3x3[float64]
+    pos*: Vec3f
+    rot*: Mat3f
   Collider* = object of PosTrackedObj
     collide*: CollisionMask
     activate*: CollisionMask
@@ -38,4 +38,4 @@ method walking*(this:Simp): bool =
 
 type
   CollidableRect* = object of Collider
-    extents*: tuple[a, b: Vec3[float64]]
+    extents*: tuple[a, b: Vec3f]
