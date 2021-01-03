@@ -1,4 +1,4 @@
-import goon,glm,glad/gl,nimgl/glfw,initcore,times,datahelpers
+import goon,glm,glad/gl,nimgl/glfw,initcore,times,datahelpers,nimPNG
 
 var defprog*: GlUint
 
@@ -134,3 +134,5 @@ proc brutelyMoveDupe*(modelIndex, dupeIndex: uint, movement: Vec3f, absolute: bo
         drawSeq[modelIndex].dupes[dupeIndex].worldTran[3] = vec4(movement, 1.0)
     else:
         drawSeq[modelIndex].dupes[dupeIndex].worldTran.translateInpl(movement)
+
+

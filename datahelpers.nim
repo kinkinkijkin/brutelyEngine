@@ -1,4 +1,4 @@
-import sequtils,glad/gl,strutils,nimgl/glfw
+import sequtils,glad/gl,strutils,nimgl/glfw,nimPNG
 
 type
   ProgInfo* = object
@@ -8,7 +8,9 @@ type
   BrutelyModel* = object
     verts*, uvs*, normals*: seq[GlFloat]
     indices*: seq[GlUint]
-
+  BrutelyTex* = object
+    texture*: Pixels
+  
 var wind*: GLFWWindow
 
 #verts seq is **3** coords per vert, no perspective coord or padding
