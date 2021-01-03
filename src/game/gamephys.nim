@@ -1,9 +1,9 @@
 import gamedata,glm,with
 
-var defgravity* = vec3f(0.0, -40.0, 0.0)
+var defgravity* = vec3f(0.0, -32.0, 0.0)
 
 type
-  Physical* = object of Collider
+  Physical* = object of ExtWithPass
     rawspeed*, simpulse*, gravity*: Vec3f
     rawrot*, rimpulse*: Mat3f
     simpmult*, rimpmult*: float
@@ -20,22 +20,21 @@ method integ(this: var Physical) =
       resetraw = false
     simpulse = vec3f(0)
     rimpulse = mat3f(0)
-method updatePos(this: var Physical) =
+method updatePos(this: var Physical, that: var Vec3f) =
   with this:
     if not run: return
-    this.pos += rawspeed
-method updateRot(this: var Physical) =
+    that += rawspeed
+method updateRot(this: var Physical, that: var Mat3f) =
   with this:
     if not run: return
-    this.rot = this.rot + rawrot
-method setupPhysical(this: var Physical) =
+    that = that + rawrot
+method setupPhysical*(this: var Physical) =
   with this:
     gravity = defgravity
     simpmult = 1.0
     rimpmult = 1.0
     run = true
-method basicPhysics*(this: var Physical) =
+method passRun*(this: var Physical, parent: var PosTrackedObj) =
   this.integ()
-  this.updateRot()
-  this.updatePos()
-  #this is an extremely basic physics method. you probably want something more complex.
+  this.updatePos(parent.pos)
+  this.updateRot(parent.rot)
