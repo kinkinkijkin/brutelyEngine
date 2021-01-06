@@ -14,13 +14,13 @@ type
     colliding*: bool
     scale*: float
     activedist*: float
-    collrot: Mat3f
+    collrot*: Mat3f
 method nearest*(this: Collision, pos: Vec3f, thatpos: Vec3f): Vec3f =
   #varies between collisions.
-  return vec3f(0)
+  return pos
 method coll*(this: var Collision, thispos: Vec3f, that: var Collision, thatpos: Vec3f): bool =
   #varies between collisions.
-  return false
+  return that.coll(thatpos, this, thispos)
 method largestDist(this: Collision): float =
   return 0.0
 method run*(this: var Collision) =
@@ -41,13 +41,19 @@ method genCorners*(this: CollisionRect): array[8, Vec3f] =
     result[5] = vec3f(size2r.x, size2.y, size2.z)
     result[6] = vec3f(size2r.x, size2.y, size2r.z)
     result[7] = vec3f(size2.x, size2r.y, size2.z)
-method nearest*(this: CollisionRect, pos: Vec3f, thatpos: Vec3f): Vec3f =
+method nearestCorn*(this: CollisionRect, pos, thatpos: Vec3f): Vec3f =
   var corners: array[8, Vec3f] = this.genCorners()
   var cornerdists: array[8, float]
   for i, corn in corners:
     cornerdists[i] = dist3D((corn + pos), thatpos)
   return corners[cornerdists.minIndex()]
-method furthest*(this: CollisionRect, pos: Vec3f, thatpos: Vec3f): Vec3f =
+method nearest*(this: CollisionRect, pos, thatpos: Vec3f): Vec3f =
+  #this line left as a warning
+  #var np = this.nearestCorn(pos, thatpos)
+  var np = this.size / 2
+  return vec3f(max(min(np.x, thatpos.x), -np.x), max(min(np.y, thatpos.y), -np.y),
+              max(min(np.z, thatpos.z), -np.z))
+method furthestCorn*(this: CollisionRect, pos, thatpos: Vec3f): Vec3f =
   var corners: array[8, Vec3f] = this.genCorners()
   var cornerdists: array[8, float]
   for i, corn in corners:
@@ -55,12 +61,25 @@ method furthest*(this: CollisionRect, pos: Vec3f, thatpos: Vec3f): Vec3f =
   return corners[cornerdists.maxIndex()]
 method largestDist*(this: CollisionRect): float =
   return dist3D(this.size, vec3f(0))
-method coll*(this: var CollisionRect, thispos: Vec3f, that: var Collision, thatpos: Vec3f):bool =
+method coll*(this: CollisionRect, thispos: Vec3f, that: Collision, thatpos: Vec3f):bool =
   var thatnear: Vec3f = that.nearest(thatpos, thispos).toLocal3D(thispos, this.collrot)
-  if thatnear.x <= (this.size.x / 2) and thatnear.y <= (this.size.y / 2):
-    if thatnear.x >= (-this.size.x / 2) and thatnear.y >= (-this.size.y / 2):
+  var sizeSc = (this.size * this.scale) / 2
+  if thatnear.x <= sizeSc.x and thatnear.y <= sizeSc.y and thatnear.z <= sizeSc.z:
+    if thatnear.x >= -sizeSc.x and thatnear.y >= -sizeSc.y and thatnear.z >= -sizeSc.z:
       return true
     else: return false
+  else: return false
+
+type
+  CollisionSphere* = object of Collision
+    size*: float
+method nearest*(this: CollisionSphere, pos, thatpos: Vec3f): Vec3f =
+  return vec3f(normDirec3D(pos, thatpos) * this.size)
+method furthest*(this: CollisionSphere, pos, thatpos: Vec3f): Vec3f =
+  return vec3f(-(normDirec3D(pos, thatpos)) * this.size)
+method coll(this: CollisionSphere, thispos: Vec3f, that: Collision, thatpos: Vec3f): bool =
+  if (dist3D(thispos, that.nearest(thatpos, thispos)) <= this.size):
+    return true
   else: return false
 
 type
