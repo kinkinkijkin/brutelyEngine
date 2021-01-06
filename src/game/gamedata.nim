@@ -51,8 +51,9 @@ method nearest*(this: CollisionRect, pos, thatpos: Vec3f): Vec3f =
   #this line left as a warning
   #var np = this.nearestCorn(pos, thatpos)
   var np = this.size / 2
-  return vec3f(max(min(np.x, thatpos.x), -np.x), max(min(np.y, thatpos.y), -np.y),
-              max(min(np.z, thatpos.z), -np.z))
+  var tpl = thatpos.toLocal3D(pos, this.collrot)
+  return vec3f(max(min(np.x, tpl.x), -np.x), max(min(np.y, tpl.y), -np.y),
+              max(min(np.z, tpl.z), -np.z)) + pos
 method furthestCorn*(this: CollisionRect, pos, thatpos: Vec3f): Vec3f =
   var corners: array[8, Vec3f] = this.genCorners()
   var cornerdists: array[8, float]
