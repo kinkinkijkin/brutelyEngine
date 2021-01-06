@@ -10,3 +10,6 @@ proc dist2D*(v1, v2: Vec2f): float =
   var step2: Vec2f = vec2f(pow(step1.x, 2), pow(step1.y, 2))
   var step3: float = step2.x + step2.y
   return sqrt(step3)
+
+proc toLocal3D*(vecin, grel: Vec3f, rot: Mat3f): Vec3f =
+  return (vecin - grel) * (rot * -1)
