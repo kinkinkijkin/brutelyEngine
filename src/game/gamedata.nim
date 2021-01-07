@@ -87,10 +87,12 @@ type
   Extensible* = object of RootObj
     ext*: Extension
 method receive*(this: var Extensible) =
-   #extend methodology from here
-   #same as the run method above. this is a sort of "test and apply" method.
-   if this.ext.active: this.ext.run()
-   return
+  #extend from here
+  if this.ext.active: this.ext.run()
+  return
+method runExts*(this: var Extensible) =
+  this.ext.run()
+  return
 
 type
   ExtWithPass* = object of Extension
@@ -106,6 +108,11 @@ type
     rot*: Mat3f
     iphysical*: bool
     phys*: ExtWithPass
+method passRunExts*(this: var PosTrackedObj) =
+  this.phys.passRun(this)
+  return
+
+type
   Collider* = object of PosTrackedObj
     collides*: CollisionMask
     collidedby*: CollisionMask
@@ -143,6 +150,19 @@ method canBeKilled(this:Collider, that:Collider): bool =
   return false
 method collidedWith*(this: var Collider) =
   this.collext.colliding = true
+method runExts*(this: var Collider) =
+  this.collext.run()
+  this.ext.run()
+  this.phys.run()
+method maybeCollide*(this: var Collider, that: var Collider): bool =
+  if this.canCollide(that):
+    var distance = dist3D(this.pos, that.pos)
+    if distance <= this.collext.activedist and distance <= that.collext.activedist:
+      return this.collext.coll(this.pos, that.collext, that.pos)
+    else: return false
+  else: return false
+method passRunExts*(this: var Collider) =
+  this.phys.passRun(this)
 
 type
   Simp* = object of Collider
