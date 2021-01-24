@@ -4,7 +4,7 @@ version       = "0.0.1"
 author        = "Ari Vermette"
 description   = "Data-oriented game engine"
 license       = "MIT"
-srcDir        = "src"
+srcDir        = "brutelyEngine"
 
 
 # Dependencies
