@@ -9,12 +9,19 @@ type
     culled*, alwaysdraw*: bool
     worldTran*: Mat4x4[GlFloat]
     tint*: Vec4[GlFloat]
-    program*: uint
+    program*, tex*: uint
   Drawable* = object
     drawableName*: string
-    VBO*, VAO*, EBO*, NBO*: GlUint
+    VBO*, VAO*, EBO*, NBO*, TBO*: GlUint
     vertCount*: int
     dupes*: seq[Duplicate]
+
+when GLVER == "3ES":
+    let defVShad* = "shaders/ES3/vdefault.glsl"
+    let defFShad* = "shaders/ES3/fdefault.glsl"
+else:
+    let defVShad* = "shaders/v1.glsl"
+    let defFShad* = "shaders/f1.glsl"
 
 proc gladLoad*(lp: proc) =
   when GLVER == "21":
@@ -25,6 +32,8 @@ proc gladLoad*(lp: proc) =
 proc goonChooseItem*(mdl: Drawable) =
   when GLVER == "21" or GLVER == "2ES":
     glBindBuffer(GL_ARRAY_BUFFER, mdl.VBO)
+    glBindBuffer(GL_ARRAY_BUFFER, mdl.TBO)
+    glBindBuffer(GL_ARRAY_BUFFER, mdl.NBO)
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mdl.EBO)
     glEnableVertexAttribArray(0)
   when GLVER == "3ES":
@@ -38,6 +47,7 @@ proc goonBuffersCreate*: Drawable =
   glGenBuffers(1, addr tmpdrw.VBO)
   glGenBuffers(1, addr tmpdrw.EBO)
   glGenBuffers(1, addr tmpdrw.NBO)
+  glGenBuffers(1, addr tmpdrw.TBO)
 
   when GLVER == "3ES": glBindVertexArray(tmpdrw.VAO)
   return tmpdrw

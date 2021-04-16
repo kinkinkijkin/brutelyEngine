@@ -1,4 +1,4 @@
-import rendercore,initcore,glad/gl,objloader,datahelpers,nimgl/glfw,glm
+import rendercore,initcore,glad/gl,objloader,datahelpers,nimgl/glfw,glm,times
 
 brutelySetup()
 
@@ -13,11 +13,16 @@ var tri: seq[GlFloat] = @[-3.0f, -3.0f, -0.5f,
                         3.0f, -3.0f, -0.5f,
                         0.0f, 3.0f, -0.5f]
 
+var triuv: seq[GlFloat] = @[0.0f, 0.0f,
+                            1.0f, 0.0f,
+                            0.5f, 1.0f]
+
 var triind: seq[GlUint] = @[0.GlUint, 1, 2]
 
 var triangleModel: BrutelyModel
 
 triangleModel.verts = tri
+triangleModel.uvs = triuv
 triangleModel.indices = triind
 
 var lightDir = vec3f(0.3, 0.5, -0.1)
@@ -49,12 +54,14 @@ setUniform1f(zfarT, 1000.0.GlFloat)
 setUniform3fv(ldirT, lightDir)
 
 var triIndex = brutelyModelSubmit(triangleModel, "triangle")
+var triTexIndex = loadinTexture("testassets/logo.png")
 
 var tmodIndex = brutelyModelSubmit(getOBJ("testassets/teapot.obj"), "test model")
 var tmodCopy1 = brutelyModelDupe(tmodIndex, mat4(1.0.GlFloat), "copy1")
 
-brutelyMoveDupe(triIndex, 0.uint, vec3f(1.0, 1.0, -5.0))
+brutelyMoveDupe(triIndex, 0.uint, vec3f(1.0, -3.0, -5.0))
 brutelyTintDupe(triIndex, 0.uint, vec4f(0.6, 0.3, 0.2, 0.3))
+brutelyDupeTexture(triIndex, 0.uint, triTexIndex)
 
 brutelyProgDupe(tmodIndex, 0.uint, toonProgInd)
 brutelyMoveDupe(tmodIndex, 0.uint, vec3f(1.0, 1.0, -10.0))
@@ -63,9 +70,13 @@ brutelyTintDupe(tmodIndex, 0.uint, vec4f(0.7, 0.4, 0.4, 1.0))
 brutelyMoveDupe(tmodIndex, tmodCopy1, vec3f(-3.0, -2.0, -100.0))
 brutelyTintDupe(tmodIndex, tmodCopy1, vec4f(0.4, 0.4, 0.4, 1.0))
 
+var starttime = cpuTime()
+
 while not wind.windowShouldClose:
     glfwPollEvents()
     echo brutelyDraw()
+    var animtime = cpuTime() - starttime
+    brutelyMoveDupe(tmodIndex, tmodCopy1, vec3f(sin(animtime * 33), cos(animtime * 32), sin(animtime * 20) * 3 - 20))
 
 wind.destroyWindow()
 glfwTerminate()

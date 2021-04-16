@@ -30,6 +30,12 @@ proc seqToUncheckedArrayGLUINT*(inseq:seq[GlUint]):ptr UncheckedArray[GlUint] =
     outUCA[i] = inseq[i]
   return outUCA
 
+proc seqToUncheckedArrayUINT8*(inseq:seq[uint8]):ptr UncheckedArray[uint8] =
+  var outUCA = cast[ptr UncheckedArray[uint8]](alloc0(sizeof(uint8) * inseq.len))
+  for i in 0..(inseq.len - 1):
+    outUCA[i] = inseq[i]
+  return outUCA
+
 proc sourceToCSARRAY*(source: seq[string]): cstringArray =
   var tmpstring: string
   for line in source:
