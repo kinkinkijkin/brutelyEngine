@@ -176,4 +176,10 @@ proc brutelyMoveDupe*(modelIndex, dupeIndex: uint, movement: Vec3f, absolute: bo
     else:
         drawSeq[modelIndex].dupes[dupeIndex].worldTran.translateInpl(movement)
 
-
+proc brutelyLookAtDupe*(modelIndex, dupeIndex: uint, pos, up: Vec3f, localspc: bool = true) =
+    var strt = drawSeq[modelIndex].dupes[dupeIndex].worldTran
+    if localspc:
+        drawSeq[modelIndex].dupes[dupeIndex].worldTran = lookAt(strt[3].xyz, strt[3].xyz + pos, up)
+    else:
+        drawSeq[modelIndex].dupes[dupeIndex].worldTran = lookAt(strt[3].xyz, pos, up)
+    
