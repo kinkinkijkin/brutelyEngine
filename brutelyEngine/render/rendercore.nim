@@ -1,4 +1,4 @@
-import goon,glm,glad/gl,nimgl/glfw,initcore,times,datahelpers,nimPNG
+import goon,glm,glad/gl,nimgl/glfw,initcore,times,datahelpers,nimPNG,math
 
 var defprog*: GlUint
 
@@ -103,7 +103,7 @@ proc brutelyDraw*(): float =
     var ent = cpuTime()
     return ent - stt
 
-proc brutelyModelSubmit*(model: BrutelyModel, modelName: string, culld, adraw: bool = false): uint {.gcsafe.} =
+proc brutelyModelSubmit*(model: BrutelyModel, modelName: string, culld, adraw: bool = false): uint =
     var tmpDrawable: Drawable = goonBuffersCreate()
 
     var tmpVerts = seqToUncheckedArrayGLFLOAT(model.verts)
@@ -176,10 +176,17 @@ proc brutelyMoveDupe*(modelIndex, dupeIndex: uint, movement: Vec3f, absolute: bo
     else:
         drawSeq[modelIndex].dupes[dupeIndex].worldTran.translateInpl(movement)
 
-proc brutelyLookAtDupe*(modelIndex, dupeIndex: uint, pos, up: Vec3f, localspc: bool = true) =
+proc brutelyLocateDupe*(modelIndex, dupeIndex: uint): Mat4 =
+    return drawSeq[modelIndex].dupes[dupeIndex].worldTran
+
+proc brutelyLookAtDupe*(modelIndex, dupeIndex: uint, pos, up: Vec3f, localspc: bool = false) =
     var strt = drawSeq[modelIndex].dupes[dupeIndex].worldTran
     if localspc:
         drawSeq[modelIndex].dupes[dupeIndex].worldTran = lookAt(strt[3].xyz, strt[3].xyz + pos, up)
     else:
         drawSeq[modelIndex].dupes[dupeIndex].worldTran = lookAt(strt[3].xyz, pos, up)
+
+proc brutelyRotateDupe*(modelIndex, dupeIndex: uint, axis: Vec3f, deg: float) =
+#    with drawSeq[modelIndex].dupes[dupeIndex]:
+    drawSeq[modelIndex].dupes[dupeIndex].worldTran.rotateInpl(radToDeg(deg), axis)
     

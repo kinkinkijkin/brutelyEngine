@@ -17,7 +17,8 @@ out vec3 normal;
 
 void main()
 {
-	vec4 cameraPos = vec4(inpos, 0) + worldTransform[3];
+    vec3 inpos2 = inpos * mat3(worldTransform);
+	vec4 cameraPos = vec4(inpos2, 0) + worldTransform[3];
     vec4 clipPos;
 
     clipPos.xy = cameraPos.xy * frustumScale;
@@ -26,7 +27,7 @@ void main()
     clipPos.z += 2.0 * zNear * zFar / (zNear - zFar);
 
     clipPos.w = -cameraPos.z;
-    fpos = vec3(worldTransform[3] * vec4(inpos, 0));
+    fpos = vec3(worldTransform[3] * vec4(inpos2, 0));
     gl_Position = clipPos;
     
     normal = vec3(vec4(innormal, 0) * worldTransform);

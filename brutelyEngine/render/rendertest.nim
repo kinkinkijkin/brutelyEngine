@@ -73,10 +73,12 @@ brutelyTintDupe(tmodIndex, tmodCopy1, vec4f(0.4, 0.4, 0.4, 1.0))
 var starttime = cpuTime()
 
 while not wind.windowShouldClose:
+    var frametimer = cpuTime()
     glfwPollEvents()
     echo brutelyDraw()
     var animtime = cpuTime() - starttime
     brutelyMoveDupe(tmodIndex, tmodCopy1, vec3f(sin(animtime * 33), cos(animtime * 32), sin(animtime * 20) * 3 - 20))
+    brutelyRotateDupe(tmodIndex, tmodCopy1,  vec3f(0.4,0.6,0), 5 * (cpuTime() - frametimer))
 
 wind.destroyWindow()
 glfwTerminate()
