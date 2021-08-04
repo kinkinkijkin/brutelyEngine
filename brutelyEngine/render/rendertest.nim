@@ -37,7 +37,7 @@ setUniform1f(znear, 0.05.GlFloat)
 setUniform1f(zfar, 1000.0.GlFloat)
 setUniform3fv(ldir, lightDir)
 
-var toonProg = prepareES3program(@["shaders/v1.glsl"], @["shaders/specialF/toonLights.glsl"])
+var toonProg = prepareES3program(@["shaders/ES3/vdefault.glsl"], @["shaders/ES3/specialF/toonLights.glsl"])
 var toonWT = glGetUniformLocation(toonProg, "worldTransform")
 var toonTT = glGetUniformLocation(toonprog, "modelTint")
 
@@ -78,7 +78,8 @@ while not wind.windowShouldClose:
     echo brutelyDraw()
     var animtime = cpuTime() - starttime
     brutelyMoveDupe(tmodIndex, tmodCopy1, vec3f(sin(animtime * 33), cos(animtime * 32), sin(animtime * 20) * 3 - 20))
-    brutelyRotateDupe(tmodIndex, tmodCopy1,  vec3f(0.4,0.6,0), 5 * (cpuTime() - frametimer))
+    brutelyRotateDupe(tmodIndex, tmodCopy1,  vec3f(0,1,0), 5 * (cpuTime() - frametimer))
+    brutelyRotateDupe(tmodIndex, 0,  vec3f(sin(animtime * 33), cos(animtime * 32), sin(animtime * 14)), 4 * (cpuTime() - frametimer))
 
 wind.destroyWindow()
 glfwTerminate()
