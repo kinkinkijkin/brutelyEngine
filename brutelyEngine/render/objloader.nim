@@ -55,19 +55,19 @@ proc getOBJ*(fileName:string, indexDelimiter:string = "/"):BrutelyModel {.gcsafe
     
     var tmpUL, tmpNL: seq[seq[GlFloat]] = @[]
     
-    tmpUL.setLen(tmpVertList.len)
-    tmpNL.setLen(tmpVertList.len)
+    tmpUL.setLen(tmpVertList.len + 1)
+    tmpNL.setLen(tmpVertList.len + 1)
     
     if not (tmpUvIndices.len < result.indices.len):
         for ind, i in result.indices:
-            tmpUL[ind] = tmpUvList[tmpUvIndices[i]]
+            tmpUL[i] = tmpUvList[tmpUvIndices[ind]]
     else:
         tmpUL = tmpUvList
         echo "a very empty obj"
         
     if not (tmpNormIndices.len < result.indices.len):
         for ind, i in result.indices:
-            tmpNL[ind] = tmpNormList[tmpNormIndices[i]]
+            tmpNL[i] = tmpNormList[tmpNormIndices[ind]]
     else:
         tmpNL = tmpNormList
         echo "a very empty obj"

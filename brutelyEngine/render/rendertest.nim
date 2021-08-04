@@ -1,4 +1,4 @@
-import rendercore,initcore,glad/gl,objloader,datahelpers,nimgl/glfw,glm,times
+import rendercore,initcore,glad/gl,objloader,datahelpers,nimgl/glfw,glm,times,math
 
 brutelySetup()
 
@@ -53,11 +53,28 @@ setUniform1f(znearT, 0.05.GlFloat)
 setUniform1f(zfarT, 1000.0.GlFloat)
 setUniform3fv(ldirT, lightDir)
 
+var skyboxProg = prepareES3program(@["shaders/ES3/specialV/skybox.glsl"], @["shaders/ES3/specialF/skyboxF.glsl"])
+
+var skyboxWT = glGetUniformLocation(skyboxProg, "worldTransform")
+var skyboxTT = glGetUniformLocation(skyboxProg, "modelTint")
+
+var skyboxProgInd = submitProgram(skyboxProg, skyboxWT, skyboxTT)
+
+var fscaleS = submitUniform(skyboxProg, "frustumScale")
+var znearS = submitUniform(skyboxProg, "zNear")
+var zfarS = submitUniform(skyboxProg, "zFar")
+
+setUniform1f(fscaleS, 1.0.GlFloat)
+setUniform1f(znearS, 0.05.GlFloat)
+setUniform1f(zfarS, 7000.0.GlFloat)
+
 var triIndex = brutelyModelSubmit(triangleModel, "triangle")
 var triTexIndex = loadinTexture("testassets/logo.png")
 
 var tmodIndex = brutelyModelSubmit(getOBJ("testassets/teapot.obj"), "test model")
 var tmodCopy1 = brutelyModelDupe(tmodIndex, mat4(1.0.GlFloat), "copy1")
+
+var skbIndex = brutelyModelSubmit(getOBJ("testassets/cube.obj"), "skybox")
 
 brutelyMoveDupe(triIndex, 0.uint, vec3f(1.0, -3.0, -5.0))
 brutelyTintDupe(triIndex, 0.uint, vec4f(0.6, 0.3, 0.2, 0.3))
@@ -70,16 +87,24 @@ brutelyTintDupe(tmodIndex, 0.uint, vec4f(0.7, 0.4, 0.4, 1.0))
 brutelyMoveDupe(tmodIndex, tmodCopy1, vec3f(-3.0, -2.0, -100.0))
 brutelyTintDupe(tmodIndex, tmodCopy1, vec4f(0.4, 0.4, 0.4, 1.0))
 
+brutelyProgDupe(skbIndex, 0.uint, skyboxProgInd)
+brutelyMoveDupe(skbIndex, 0.uint, vec3f(0.1))
+brutelyTintDupe(skbIndex, 0.uint, vec4f(0.14, 0.32, 0.55, 0.8))
+brutelyDupeTexture(skbIndex, 0.uint, triTexIndex)
+
 var starttime = cpuTime()
 
+var ftt: float = 0.0
 while not wind.windowShouldClose:
     var frametimer = cpuTime()
     glfwPollEvents()
     echo brutelyDraw()
     var animtime = cpuTime() - starttime
     brutelyMoveDupe(tmodIndex, tmodCopy1, vec3f(sin(animtime * 33), cos(animtime * 32), sin(animtime * 20) * 3 - 20))
-    brutelyRotateDupe(tmodIndex, tmodCopy1,  vec3f(0,1,0), 5 * (cpuTime() - frametimer))
-    brutelyRotateDupe(tmodIndex, 0,  vec3f(sin(animtime * 33), cos(animtime * 32), sin(animtime * 14)), 4 * (cpuTime() - frametimer))
+    brutelyRotateDupe(tmodIndex, tmodCopy1,  vec3f(0,1,0), 5 * ftt)
+    brutelyRotateDupe(tmodIndex, 0,  vec3f(sin(animtime * 33), cos(animtime * 32), sin(animtime * 14)), 4 * ftt)
+    camMatr.rotateInpl(degToRad(60.0) * ftt, vec3f(0,1.0,0) )
+    ftt = cpuTime() - frametimer
 
 wind.destroyWindow()
 glfwTerminate()

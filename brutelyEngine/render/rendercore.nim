@@ -7,6 +7,8 @@ var drawSeq: seq[Drawable] = @[]
 var unifSeq: seq[Glint] = @[]
 var texSeq: seq[Gluint] = @[0.Gluint]
 
+var camMatr*: Mat4f = mat4f(1.0)
+
 proc submitUniform*(program: GlUint, name: string): uint =
     var unif = glGetUniformLocation(program, name)
     unifSeq.add(unif)
@@ -80,7 +82,7 @@ proc brutelyDraw*(): float =
     for model in drawSeq:
         for dupe in model.dupes:
             if dupe.alwaysdraw or not dupe.culled:
-                var wtcopy = dupe.worldTran
+                var wtcopy = dupe.worldTran * camMatr
                 var tintcopy = dupe.tint
                 var currpro = progSeq[dupe.program]
                 glUseProgram(currpro.loc)

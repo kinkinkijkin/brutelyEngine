@@ -107,9 +107,9 @@ proc brutelyStart*(): bool =
         glDepthFunc(GL_LEQUAL)
         glDepthMask(GL_TRUE.GlBoolean)
 
-        glEnable(GL_CULL_FACE)
-        glCullFace(GL_FRONT)
-        glFrontFace(GL_CW)
+        #glEnable(GL_CULL_FACE)
+        #glCullFace(GL_FRONT)
+        #glFrontFace(GL_CW)
         success = true
     finally:
         return success
