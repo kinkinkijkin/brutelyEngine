@@ -92,6 +92,8 @@ brutelyMoveDupe(skbIndex, 0.uint, vec3f(0.1))
 brutelyTintDupe(skbIndex, 0.uint, vec4f(0.14, 0.32, 0.55, 0.8))
 brutelyDupeTexture(skbIndex, 0.uint, triTexIndex)
 
+camMatr[3] += vec4f((vec3f(0.1, 0.1, 0.1)), 1)
+
 var starttime = cpuTime()
 
 var ftt: float = 0.0
@@ -103,7 +105,8 @@ while not wind.windowShouldClose:
     brutelyMoveDupe(tmodIndex, tmodCopy1, vec3f(sin(animtime * 33), cos(animtime * 32), sin(animtime * 20) * 3 - 20))
     brutelyRotateDupe(tmodIndex, tmodCopy1,  vec3f(0,1,0), 5 * ftt)
     brutelyRotateDupe(tmodIndex, 0,  vec3f(sin(animtime * 33), cos(animtime * 32), sin(animtime * 14)), 4 * ftt)
-    camMatr.rotateInpl(degToRad(60.0) * ftt, vec3f(0,1.0,0) )
+    camMatr.rotateInpl(60.0 * ftt, vec3f(0,0.9,0.1) )
+    
     ftt = cpuTime() - frametimer
 
 wind.destroyWindow()

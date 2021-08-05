@@ -82,7 +82,7 @@ proc brutelyDraw*(): float =
     for model in drawSeq:
         for dupe in model.dupes:
             if dupe.alwaysdraw or not dupe.culled:
-                var wtcopy = dupe.worldTran * camMatr
+                var wtcopy = camMatr * dupe.worldTran
                 var tintcopy = dupe.tint
                 var currpro = progSeq[dupe.program]
                 glUseProgram(currpro.loc)

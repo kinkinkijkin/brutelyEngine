@@ -18,7 +18,8 @@ out vec3 normal;
 void main()
 {
     vec3 inpos2 = inpos * mat3(worldTransform);
-	vec4 cameraPos = vec4(inpos2, 0) + worldTransform[3];
+	//vec4 cameraPos = vec4(inpos2, 0) + worldTransform[3];
+    vec4 cameraPos = -worldTransform * vec4(inpos, 0) + worldTransform[3];
     vec4 clipPos;
 
     clipPos.xy = cameraPos.xy * frustumScale;
