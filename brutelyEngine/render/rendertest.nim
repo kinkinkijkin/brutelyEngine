@@ -38,10 +38,8 @@ setUniform1f(zfar, 1000.0.GlFloat)
 setUniform3fv(ldir, lightDir)
 
 var toonProg = prepareES3program(@["shaders/ES3/vdefault.glsl"], @["shaders/ES3/specialF/toonLights.glsl"])
-var toonWT = glGetUniformLocation(toonProg, "worldTransform")
-var toonTT = glGetUniformLocation(toonprog, "modelTint")
 
-var toonProgInd = submitProgram(toonProg, toonWT, toonTT)
+var toonProgInd = submitProgramEasy(toonProg)
 
 var fscaleT = submitUniform(toonProg, "frustumScale")
 var znearT = submitUniform(toonProg, "zNear")
@@ -55,10 +53,7 @@ setUniform3fv(ldirT, lightDir)
 
 var skyboxProg = prepareES3program(@["shaders/ES3/specialV/skybox.glsl"], @["shaders/ES3/specialF/skyboxF.glsl"])
 
-var skyboxWT = glGetUniformLocation(skyboxProg, "worldTransform")
-var skyboxTT = glGetUniformLocation(skyboxProg, "modelTint")
-
-var skyboxProgInd = submitProgram(skyboxProg, skyboxWT, skyboxTT)
+var skyboxProgInd = submitProgramEasy(skyboxProg)
 
 var fscaleS = submitUniform(skyboxProg, "frustumScale")
 var znearS = submitUniform(skyboxProg, "zNear")

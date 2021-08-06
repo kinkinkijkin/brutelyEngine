@@ -22,6 +22,12 @@ proc submitProgram*(program: GlUint, wt, tint: GlInt): uint =
     progSeq.add(tmpSP)
     return (progSeq.len - 1).uint
 
+proc submitProgramEasy*(program:GlUint, WT, TINT: bool = true): uint =
+    var worT, tit: GlInt
+    if WT: worT = glGetUniformLocation(program, "worldTransform")
+    if TINT: tit = glGetUniformLocation(program, "modelTint")
+    return program.submitProgram(worT, tit)
+
 proc loadinTexture*(filename: string): uint =
     #ONLY LOADS PNGS FOR NOW
     var loadedPNG: PNGResult[seq[uint8]]
