@@ -18,7 +18,7 @@ out vec3 normal;
 void main()
 {
     vec3 inpos2 = inpos * 100.0;
-	vec4 cameraPos = -worldTransform * vec4(inpos2, 0);
+	vec4 cameraPos = -worldTransform * vec4(-inpos2, 0);
     vec4 clipPos;
 
     clipPos.xy = cameraPos.xy * frustumScale;
