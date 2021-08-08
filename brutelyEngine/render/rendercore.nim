@@ -73,7 +73,7 @@ proc brutelySetup*() =
     var wtloc = glGetUniformLocation(defprog, "worldTransform")
     discard submitProgram(defprog, wtloc, tloc)
 
-proc brutelyDraw*(): float =
+proc brutelyDraw*(drawGroup: seq[Drawable] = drawSeq): float =
     var stt = cpuTime()
 
     #work
@@ -85,7 +85,7 @@ proc brutelyDraw*(): float =
     #glUseProgram(defprog)
 
     #iterate through drawables and draw them
-    for model in drawSeq:
+    for model in drawGroup:
         for dupe in model.dupes:
             if dupe.alwaysdraw or not dupe.culled:
                 var wtcopy = camMatr * dupe.worldTran
